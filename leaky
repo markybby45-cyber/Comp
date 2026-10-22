@@ -1,0 +1,53 @@
+#include <iostream>
+#include <algorithm>
+using namespace std;
+// Leaky Bucket Algorithm for Congestion Control
+int main()
+{
+int bucketSize, outputRate, n;
+int incoming, stored = 0;
+int totalDropped = 0, totalSent = 0;
+cout << "Enter bucket size: ";
+cin >> bucketSize;
+cout << "Enter output rate: ";
+cin >> outputRate;
+cout << "Enter number of time intervals: ";
+cin >> n;
+for (int i = 1; i <= n; i++)
+{
+cout << "\nEnter packets arriving at time " << i << ": ";
+cin >> incoming;
+// Check for overflow
+if (stored + incoming > bucketSize)
+{
+int dropped = (stored + incoming) - bucketSize;
+cout << "Bucket overflow! Packets dropped: " << dropped << endl;
+totalDropped += dropped;
+stored = bucketSize;
+}
+else
+{
+stored += incoming;
+}
+int transmitted = min(stored, outputRate);
+stored -= transmitted;
+totalSent += transmitted;
+cout << "Packets transmitted: " << transmitted << endl;
+cout << "Packets remaining in bucket: " << stored << endl;
+}
+// Empty the remaining packets
+int t = n;
+while (stored > 0)
+{
+t++;
+int transmitted = min(stored, outputRate);
+stored -= transmitted;
+totalSent += transmitted;
+cout << "\nTime " << t << " (no new packets)";
+cout << "\nPackets transmitted: " << transmitted;
+cout << "\nPackets remaining: " << stored << endl;
+}
+cout << "\nTotal packets transmitted: " << totalSent << endl;
+cout << "Total packets dropped: " << totalDropped << endl;
+return 0;
+}
